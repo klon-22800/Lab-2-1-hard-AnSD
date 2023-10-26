@@ -51,3 +51,34 @@ TEST(FunctionsTests, insert_at_tail_DoubLeinkedList) {
     cout << c;
     // Assert
 }
+TEST(FunctionsTests, pop_head) {
+    DoubleLinkedList a;
+    Node b(1, 1);
+    a.insert_at_head(0, 1);
+    a.insert_at_head(0, 1);
+    a.insert_at_head(0, 1);
+    a.insert_at_head(b);
+    cout << a;
+    a.pop_head();
+    a.pop_head();
+    a.pop_head();
+    a.pop_head();
+    cout << a;
+    // Assert
+}
+TEST(FunctionsTests, pop_tail) {
+    DoubleLinkedList a;
+    Node b(1, 1);
+    a.insert_at_head(0, 1);
+    a.insert_at_head(0, 1);
+    a.insert_at_head(0, 1);
+    a.insert_at_head(b);
+    cout << a;
+    a.pop_tail();
+    a.pop_tail();
+    a.pop_tail();
+    a.pop_tail();
+    a.pop_tail();
+    cout << a;
+    // Assert
+}

@@ -128,22 +128,33 @@ namespace Polynomial {
 
 		void insert_at_head(Node other) {
 			Node* newNode = new Node(other.k, other.pow);
-			newNode->next = _head;
-			if (_head != nullptr)
+			newNode->next = nullptr;
+			if (_head == nullptr) {
+				_head = newNode;
+				_tail = newNode;
+			}
+			else {
+				newNode->next = _head;
 				_head->prev = newNode;
-			_head = newNode;
-			_tail = _head;
+				_head = newNode;
+			}
 		}
 
 		void insert_at_head(double k, int pow) {
 			Node* newNode = new Node;
 			newNode->k = k;
 			newNode->pow = pow;
-			newNode->next = _head;
-			if (_head != nullptr)
+			newNode->next = nullptr;
+			if (_head == nullptr) {
+				_head = newNode;
+				_tail = newNode;
+			}
+			else{
+				newNode->next = _head;
 				_head->prev = newNode;
-			_head = newNode;
-			_tail = _head;
+				_head = newNode;
+			}
+			
 		}
 		void insert_at_head(const DoubleLinkedList& other) {
 			if (other.get_head() == nullptr) {
@@ -162,6 +173,47 @@ namespace Polynomial {
 			}
 		}
 
+		void pop_head() {
+			if (_head == nullptr) {
+				return;
+			}
+
+			Node* pop_node = _head;
+
+			if (_head == _tail) {
+				_head = nullptr;
+				_tail = nullptr;
+			}
+			else {
+				_head = _head->next;
+				_head->prev = nullptr;
+			}
+			pop_node->next = nullptr;
+			if (_head == nullptr) {
+				_tail = nullptr;
+			}
+		}
+
+		void pop_tail() {
+			if (_head == nullptr) {
+				return;
+			}
+			Node* pop_node = _tail;
+			if (_head == _tail) {
+				_head = nullptr;
+				_tail = nullptr;
+			}
+			else {
+				_tail = _tail->prev;
+				_tail->next = nullptr;
+			}
+			pop_node->prev = nullptr;
+
+			if (_tail == nullptr) {
+				_head = nullptr;
+			}
+		}
+
 		DoubleLinkedList& operator=(const DoubleLinkedList& other) {
 			_head = nullptr;
 			Node* temp = other.get_head();
@@ -175,7 +227,7 @@ namespace Polynomial {
 	ostream& operator<<(ostream& stream, DoubleLinkedList& a) {
 		Node* temp = a.get_head();
 		while (temp != nullptr) {
-			cout << temp->k << " " << temp->pow << endl;
+			cout << temp->k << " " << temp->pow<<endl;
 			temp = temp->next;
 		}
 		return stream;
