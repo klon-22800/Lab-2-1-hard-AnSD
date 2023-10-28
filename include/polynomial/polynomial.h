@@ -31,6 +31,10 @@ namespace Polynomial {
 			prev = nullptr;
 			next = nullptr;
 		}
+		void operator=(Node& rhs) {
+			k = rhs.k;
+			pow = rhs.pow;
+		}
 	};
 
 	class DoubleLinkedList {
@@ -67,7 +71,6 @@ namespace Polynomial {
 				delete _head;
 				_head = temp;
 			}
-			cout << _head;
 		}
 
 		Node* get_head() const {
@@ -79,6 +82,9 @@ namespace Polynomial {
 
 		void insert_at_tail(Node other) {
 			Node* newNode = new Node(other.k, other.pow);
+			if (other.k == 0) {
+				return;
+			}
 			newNode->next = nullptr;
 			if (_head == nullptr) {
 				newNode->prev = nullptr;
@@ -93,6 +99,9 @@ namespace Polynomial {
 		}
 
 		void insert_at_tail(double k, int pow) {
+			if (k == 0) {
+				return;
+			}
 			Node* newNode = new Node;
 			newNode->k = k;
 			newNode->pow = pow;
@@ -127,6 +136,9 @@ namespace Polynomial {
 		}
 
 		void insert_at_head(Node other) {
+			if (other.k == 0) {
+				return;
+			}
 			Node* newNode = new Node(other.k, other.pow);
 			newNode->next = nullptr;
 			if (_head == nullptr) {
@@ -141,6 +153,9 @@ namespace Polynomial {
 		}
 
 		void insert_at_head(double k, int pow) {
+			if (k == 0) {
+				return;
+			}
 			Node* newNode = new Node;
 			newNode->k = k;
 			newNode->pow = pow;
@@ -213,6 +228,144 @@ namespace Polynomial {
 				_head = nullptr;
 			}
 		}
+		void pop(int index) {
+			if (_head == nullptr) {
+				throw std::out_of_range("List is empty");
+			}
+			Node* cur = _head;
+			if (index == 0) {
+				_head = _head->next;
+				if (_head != nullptr) {
+					_head->prev = nullptr;
+				}
+				delete cur;
+				return;
+			}
+			int cur_index = 0;
+			while (cur != nullptr && cur_index < index) {
+				cur = cur->next;
+				cur_index++;
+			}
+			if (cur != nullptr && cur_index == index) {
+				Node* prev = cur->prev;
+				prev->next = cur->next;
+
+				if (cur->next != nullptr) {
+					cur->next->prev = prev;
+				}
+
+				delete cur;
+			}
+		}
+		void delete_node(const Node other) {
+			if (_head == nullptr) {
+				return;
+			}
+			Node* cur = _head;
+			while (cur != nullptr) {
+				if (cur->k == other.k && cur->pow == other.pow) {
+					Node* remove_node = cur;
+
+					if (cur == _head) {
+						_head = cur->next;
+					}
+
+					if (cur == _tail) {
+						_tail = cur->prev;
+					}
+					if (cur->prev != nullptr) {
+						cur->prev->next = cur->next;
+					}
+
+					if (cur->next != nullptr) {
+						cur->next->prev = cur->prev;
+					}
+					cur = cur->next;
+					delete remove_node;
+				}
+				else {
+					cur = cur->next;
+				}
+			}
+			return;
+		}
+		void normal_form() {
+			Node* cur = _head;
+			int index = 0;
+			while (cur != nullptr) {
+				Node* cur2 = cur->next;
+				int index_2 = index + 1;
+				while (cur2 != nullptr) {
+					if (cur->pow == cur2->pow) {
+						cur->k += cur2->k;
+						cur2 = cur2->next;
+						pop(index_2);
+					}
+					else {
+						cur2 = cur2->next;
+						index_2++;
+					}
+				}
+				index_2 = 0;
+				cur = cur->next;
+				index++;
+			}
+			return;
+		}
+		void sort() {
+			if (_head == nullptr) {
+				return;
+			}
+			Node* cur = _head->next;
+			while (cur != nullptr) {
+				Node* tmp = cur;
+				int value = tmp->pow;
+				Node* prev = tmp->prev;
+
+				while (prev != nullptr && prev->pow > value) {
+					tmp->pow = prev->pow;
+					tmp = prev;
+					prev = prev->prev;
+				}
+				tmp->pow = value;
+				cur = cur->next;
+			}
+		}
+		double value(double x) {
+			double sum = 0;
+			Node* cur = _head;
+			while (cur != nullptr) {
+				sum += cur->k*pow(x, cur->pow);
+				cur = cur->next;
+			}
+			return sum;
+		}
+		void print_n() {
+			Node* temp = _head;
+			while (temp != nullptr){
+				if (temp->next == nullptr) {
+					cout << temp->k << "X^" << temp->pow;
+					return;
+				}
+				cout << temp->k << "X^" << temp->pow <<"+";
+				temp = temp->next;
+			}
+
+		}
+
+		Node& operator()(int index) {
+			Node* cur = _head;
+			int cur_index = 0;
+			while (cur != nullptr && cur_index < index) {
+				cur = cur->next;
+				cur_index++;
+			}
+			if (cur != nullptr && cur_index == index)
+			{
+				return *cur;
+			}
+			throw std::out_of_range("Index out of range");
+		}
 
 		DoubleLinkedList& operator=(const DoubleLinkedList& other) {
 			_head = nullptr;
@@ -232,5 +385,8 @@ namespace Polynomial {
 		}
 		return stream;
 	}
+	ostream& operator<<(ostream& stream, Node& a) {
+		cout << a.k << " " << a.pow << endl;
+		return stream;
+	}
 }
-
