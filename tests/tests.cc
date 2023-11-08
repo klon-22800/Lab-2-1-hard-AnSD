@@ -157,3 +157,43 @@ TEST(FunctionsTests, print_n) {
     a.print_n();
     // Assert
 }
+TEST(FunctionsTests, index_append) {
+    DoubleLinkedList a;
+    Node b(1, 5);
+    a.insert_at_head(1, 1);
+    a.insert_at_head(1, 1);
+    a(1) = b;
+    cout << a;
+    // Assert
+}
+TEST(FunctionsTests, sort) {
+    DoubleLinkedList a;
+    a.insert_at_head(2, 2);
+    a.insert_at_head(1, 1);
+    a.insert_at_head(2, 2);
+    a.sort();
+    cout << a;
+    // Assert
+}
+TEST(FunctionsTests, delete_123456) {
+    DoubleLinkedList a;
+    Node b(2, 3);
+    a.insert_at_head(2, 2);
+    a.insert_at_head(1, 1);
+    a.insert_at_head(2, 3);
+    a.delete_node(b);
+    cout << a;
+    // Assert
+}
+TEST(FunctionsTests, delete_1234567) {
+    DoubleLinkedList a;
+    DoubleLinkedList b;
+    a.insert_at_head(2, 2);
+    a.insert_at_head(1, 1);
+    a.insert_at_head(2, 3);
+    b.insert_at_head(7, 8);
+    b.insert_at_head(5, 6);
+    a.insert_at_head(b);
+    cout << a;
+    // Assert
+}

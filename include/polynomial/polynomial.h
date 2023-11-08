@@ -11,7 +11,12 @@ namespace Polynomial {
 		// («десь беретс€ одно инициализирующее значение, можно брать больше)
 		std::uniform_int_distribution<> distribution(a, b); // –авномерное распределение [a, b]
 		int x = distribution(generator); // —лучайное число.
-		return x;
+		if (x == 0) {
+			random(a, b);
+		}
+		else {
+			return x;
+		}
 	}
 
 	struct Node {
@@ -175,7 +180,7 @@ namespace Polynomial {
 			if (other.get_head() == nullptr) {
 				return;
 			}
-			Node* cur = other.get_head();
+			Node* cur = other.get_tail();
 			while (cur != nullptr) {
 				Node* newNode = new Node;
 				newNode->k = cur->k;
@@ -184,7 +189,7 @@ namespace Polynomial {
 				newNode->next = nullptr;
 
 				insert_at_head(*newNode);
-				cur = cur->next;
+				cur = cur->prev;
 			}
 		}
 
@@ -231,6 +236,9 @@ namespace Polynomial {
 		void pop(int index) {
 			if (_head == nullptr) {
 				throw std::out_of_range("List is empty");
+			}
+			if (index < 0) {
+				throw std::invalid_argument("incorrect index");
 			}
 			Node* cur = _head;
 			if (index == 0) {
@@ -320,14 +328,17 @@ namespace Polynomial {
 			while (cur != nullptr) {
 				Node* tmp = cur;
 				int value = tmp->pow;
+				int value_k = tmp->k;
 				Node* prev = tmp->prev;
 
-				while (prev != nullptr && prev->pow > value) {
+				while (prev != nullptr && prev->pow < value) {
 					tmp->pow = prev->pow;
+					tmp->k = prev->k;
 					tmp = prev;
 					prev = prev->prev;
 				}
 				tmp->pow = value;
+				tmp->k = value_k;
 				cur = cur->next;
 			}
 		}
@@ -344,16 +355,22 @@ namespace Polynomial {
 			Node* temp = _head;
 			while (temp != nullptr){
 				if (temp->next == nullptr) {
-					cout << temp->k << "X^" << temp->pow;
+					cout << temp->k << "x^" << temp->pow;
 					return;
 				}
-				cout << temp->k << "X^" << temp->pow <<"+";
+				if (temp->next->k > 0) {
+					cout << temp->k << "x^" << temp->pow << "+";
+				}
+				if (temp->next->k < 0) {
+					cout << temp->k << "x^" << temp->pow;
+				}
 				temp = temp->next;
 			}
+			return;
 
 		}
 
-		Node& operator()(int index) {
+		Node& operator()(int index) const {
 			Node* cur = _head;
 			int cur_index = 0;
 			while (cur != nullptr && cur_index < index) {
@@ -380,13 +397,22 @@ namespace Polynomial {
 	ostream& operator<<(ostream& stream, DoubleLinkedList& a) {
 		Node* temp = a.get_head();
 		while (temp != nullptr) {
-			cout << temp->k << " " << temp->pow<<endl;
+			stream << temp->k << " " << temp->pow<<endl;
 			temp = temp->next;
 		}
 		return stream;
 	}
 	ostream& operator<<(ostream& stream, Node& a) {
-		cout << a.k << " " << a.pow << endl;
+		stream << a.k << " " << a.pow << endl;
 		return stream;
+	}
+
+	double value(Node* head,int x) {
+		double sum = 0;
+		while (head != nullptr) {
+			sum += head->k * pow(x, head->pow);
+			head = head->next;
+		}
+		return sum;
 	}
 }
